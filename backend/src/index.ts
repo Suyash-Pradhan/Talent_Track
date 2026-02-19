@@ -1,8 +1,10 @@
 import express from "express";
 const PORT = 8000;
 const app = express();
+import subjectRouter from "./routes/subjects.route.js";
 
 app.use(express.json());
+app.use('api/subjects', subjectRouter);
 
 app.get('/', (req, res) => {
     res.send("Hello World");
