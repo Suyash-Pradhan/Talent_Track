@@ -60,8 +60,8 @@ route.get('/', async (req, res) => {
             },
         });
     } catch (error) {
-        console.error(`/GET subjects error:${error}`);
-        res.status(500).json({ error: 'faild to get subjects',err:error });
+        console.error('/GET subjects error:', error);
+        res.status(500).json({ error: 'Failed to get subjects' });
     }
 });
 export default route;
