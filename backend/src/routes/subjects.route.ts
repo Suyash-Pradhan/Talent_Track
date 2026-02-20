@@ -34,12 +34,12 @@ route.get('/', async (req, res) => {
         }
         const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined
         const countResult = await db
-            .select({ count: sql<number>`count(*)` })
+            .select({ count: sql<number>`cast(count(*) as int)` })
             .from(subjects)
             .leftJoin(departments, eq(subjects.departmentId, departments.id))
             .where(whereClause);
 
-        const totalCount = countResult[0]?.count ?? 0;
+        const totalCount = Number(countResult[0]?.count ?? 0);
 
 
         const subjectsList = await db
@@ -66,8 +66,13 @@ route.get('/', async (req, res) => {
             },
         });
     } catch (error) {
+<<<<<<< HEAD
         console.error(`/GET subjects error:${error}`);
         res.status(500).json({ error: 'faild to get subjects', err: error });
+=======
+        console.error('/GET subjects error:', error);
+        res.status(500).json({ error: 'Failed to get subjects' });
+>>>>>>> ed5cc97a6db887d5782bbaba9a25158b6c05f5ae
     }
 });
 export default route;
