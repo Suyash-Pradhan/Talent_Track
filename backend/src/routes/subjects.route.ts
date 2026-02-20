@@ -28,12 +28,12 @@ route.get('/', async (req, res) => {
         }
         const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined
         const countResult = await db
-            .select({ count: sql<number>`count(*)` })
+            .select({ count: sql<number>`cast(count(*) as int)` })
             .from(subjects)
             .leftJoin(departments, eq(subjects.departmentId, departments.id))
             .where(whereClause);
 
-        const totalCount = countResult[0]?.count ?? 0;
+        const totalCount = Number(countResult[0]?.count ?? 0);
 
    
         const subjectsList = await db
