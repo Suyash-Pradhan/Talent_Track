@@ -7,9 +7,15 @@ const route = express.Router();
 
 route.get('/', async (req, res) => {
     try {
-        const { search, department, page = 1, limit = 10 } = req.query;
-        const currentPage = Math.max(1, +page);
-        const limitPerPage = Math.max(1, +limit);
+        const getQueryString = (value: unknown): string | undefined =>
+            typeof value === "string" ? value : Array.isArray(value) ? value[0] : undefined;
+
+        const search = getQueryString(req.query.search);
+        const department = getQueryString(req.query.department);
+
+        const currentPage = Math.max(1, Number(getQueryString(req.query.page)) ?? 1);
+        const limitPerPage = Math.max(1, Number(getQueryString(req.query.limit)) ?? 10);
+
 
         const offset = (currentPage - 1) * limitPerPage;
         const filterConditions = [];
@@ -35,7 +41,7 @@ route.get('/', async (req, res) => {
 
         const totalCount = countResult[0]?.count ?? 0;
 
-   
+
         const subjectsList = await db
             .select({
                 ...getTableColumns(subjects),
@@ -61,7 +67,7 @@ route.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error(`/GET subjects error:${error}`);
-        res.status(500).json({ error: 'faild to get subjects',err:error });
+        res.status(500).json({ error: 'faild to get subjects', err: error });
     }
 });
 export default route;

@@ -7,7 +7,7 @@ import cors from "cors";
 app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    METHODS: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }))
 app.use('/api/subjects', subjectRouter);
