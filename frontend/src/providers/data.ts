@@ -1,66 +1,34 @@
-import {
-  BaseRecord,
-  DataProvider,
-  GetListParams,
-  GetListResponse,
-} from "@refinedev/core";
+import { BACKEND_BASE_URL } from '@/constants';
+import { ListResponse } from '@/types';
+import { CreateDataProviderOptions, createDataProvider } from '@refinedev/rest';
+import { getEndPoints } from 'recharts/types/cartesian/ReferenceLine';
+const options: CreateDataProviderOptions = {
+  getList: {
+    getEndpoint: ({ resource }) => resource,
+    buildQueryParams: async ({ pagination, filters, resource }) => {
+      const page = pagination?.currentPage ?? 1;
+      const pageSieze = pagination?.pageSize ?? 10;
+      const params: Record<string, string | number> = { page, limit: pageSieze };
 
-import { Subject } from "@/types";
-
-const MOCK_SUBJECTS: Subject[] = [
-  {
-    id: 1,
-    code: "CS501",
-    name: "Advanced Algorithms",
-    department: "Computer Science",
-    description:
-      "Deep dive into graph theory, dynamic programming, and distributed algorithms.",
-  },
-  {
-    id: 2,
-    code: "MAT320",
-    name: "Applied Linear Algebra",
-    department: "Mathematics",
-    description:
-      "Matrix factorization and vector spaces with practical data science applications.",
-  },
-  {
-    id: 3,
-    code: "PHY210",
-    name: "Modern Physics",
-    department: "Physics",
-    description:
-      "Covers relativity, quantum theory, and the experimental foundations of physics.",
-  },
-];
-
-export const dataProvider: DataProvider = {
-  getList: async <TData extends BaseRecord = BaseRecord>({
-    resource,
-  }: GetListParams): Promise<GetListResponse<TData>> => {
-    if (resource !== "subjects") {
-      return {
-        data: [] as TData[],
-        total: 0,
-      };
+      filters?.forEach((filter) => {
+        const field = 'field' in filter ? filter.field : '';
+        const value = String(filter.value);
+        if (resource === 'subjects') {
+          if (field === 'department') params.department = value
+          if (field === 'name' || field === 'code') params.search = value
+        }
+      })
+      return params;
+    },
+    mapResponse: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+      return payload.data || [];
+    },
+    getTotalCount: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
     }
-
-    return {
-      data: MOCK_SUBJECTS as unknown as TData[],
-      total: MOCK_SUBJECTS.length,
-    };
-  },
-  getOne: async () => {
-    throw new Error("getOne is not implemented in the mock data provider");
-  },
-  create: async () => {
-    throw new Error("create is not implemented in the mock data provider");
-  },
-  update: async () => {
-    throw new Error("update is not implemented in the mock data provider");
-  },
-  deleteOne: async () => {
-    throw new Error("deleteOne is not implemented in the mock data provider");
-  },
-  getApiUrl: () => "",
-};
+  }
+}
+const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
+export { dataProvider }
