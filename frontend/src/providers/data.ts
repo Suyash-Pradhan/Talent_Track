@@ -21,12 +21,12 @@ const options: CreateDataProviderOptions = {
       return params;
     },
     mapResponse: async (response) => {
-      const playload: ListResponse = await response.json();
-      return playload.data || [];
+      const payload: ListResponse = await response.clone().json();
+      return payload.data || [];
     },
     getTotalCount: async (response) => {
-      const playload: ListResponse = await response.json();
-      return playload.pagination?.total ?? playload.data?.length ?? 0;
+      const payload: ListResponse = await response.clone().json();
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
     }
   }
 }
