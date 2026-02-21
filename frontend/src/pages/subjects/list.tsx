@@ -6,7 +6,7 @@ import { ListView } from '@/components/refine-ui/views/list-view.tsx'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { DEPARTMENTS_OPTIONS } from '@/constants'
+import { DEPARTMENT_OPTIONS } from '@/constants'
 import { Subject } from '@/types'
 import { SelectValue } from '@radix-ui/react-select'
 import { useTable } from '@refinedev/react-table'
@@ -39,7 +39,7 @@ function CreateList() {
       },
       {
         id: 'department',
-        accessorKey: 'department',
+        accessorKey: 'department.name',
         size: 150,
         header: () => <p className='column-title '>department</p>,
         cell: ({ getValue }) => <Badge variant='secondary'>{getValue<string>()}</Badge>,
@@ -86,9 +86,9 @@ function CreateList() {
               <SelectValue placeholder='Select Department' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='computer'>Computer</SelectItem>
+              <SelectItem value='all'>All Departments</SelectItem>
               {
-                DEPARTMENTS_OPTIONS.map((dept) => (
+                DEPARTMENT_OPTIONS.map((dept) => (
                   <SelectItem
                     key={dept.value}
                     value={dept.value}>
