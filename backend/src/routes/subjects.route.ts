@@ -13,8 +13,8 @@ route.get('/', async (req, res) => {
         const search = getQueryString(req.query.search);
         const department = getQueryString(req.query.department);
 
-        const currentPage = Math.max(1, Number(getQueryString(req.query.page)) ?? 1);
-        const limitPerPage = Math.max(1, Number(getQueryString(req.query.limit)) ?? 10);
+        const currentPage = Math.max(1, Number(getQueryString(req.query.page)) || 1);
+        const limitPerPage = Math.max(1, Number(getQueryString(req.query.limit)) || 10);
 
 
         const offset = (currentPage - 1) * limitPerPage;
