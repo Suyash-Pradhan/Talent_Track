@@ -1,0 +1,73 @@
+import { and, eq, getTableColumns, desc, ilike, or, sql } from 'drizzle-orm';
+import express from 'express'
+import { departments, subjects } from '../db/schema/schema.js';
+import { db } from '../db/index.js';
+
+const route = express.Router();
+
+route.get('/', async (req, res) => {
+    try {
+        const getQueryString = (value: unknown): string | undefined =>
+            typeof value === "string" ? value : Array.isArray(value) ? value[0] : undefined;
+
+        const search = getQueryString(req.query.search);
+        const department = getQueryString(req.query.department);
+
+        const currentPage = Math.max(1, Number(getQueryString(req.query.page)) || 1);
+        const limitPerPage = Math.max(1, Number(getQueryString(req.query.limit)) || 10);
+
+
+        const offset = (currentPage - 1) * limitPerPage;
+        const filterConditions = [];
+        if (search) {
+            filterConditions.push(
+                or(
+                    ilike(subjects.name, `%${search}%`),
+                    ilike(subjects.code, `%${search}%`),
+                )
+            )
+        }
+        if (department) {
+            filterConditions.push(
+                ilike(departments.name, `%${department}%`)
+            )
+        }
+        const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined
+        const countResult = await db
+            .select({ count: sql<number>`cast(count(*) as int)` })
+            .from(subjects)
+            .leftJoin(departments, eq(subjects.departmentId, departments.id))
+            .where(whereClause);
+
+        const totalCount = Number(countResult[0]?.count ?? 0);
+
+
+        const subjectsList = await db
+            .select({
+                ...getTableColumns(subjects),
+                department: {
+                    ...getTableColumns(departments),
+                },
+            })
+            .from(subjects)
+            .leftJoin(departments, eq(subjects.departmentId, departments.id))
+            .where(whereClause)
+            .orderBy(desc(subjects.createdAt))
+            .limit(limitPerPage)
+            .offset(offset);
+
+        res.status(200).json({
+            data: subjectsList,
+            pagination: {
+                page: currentPage,
+                limit: limitPerPage,
+                total: totalCount,
+                totalPages: Math.ceil(totalCount / limitPerPage),
+            },
+        });
+    } catch (error) {
+        console.error(`/GET subjects error:${error}`);
+        res.status(500).json({ error: 'faild to get subjects' });
+    }
+});
+export default route;
