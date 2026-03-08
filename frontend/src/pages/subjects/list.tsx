@@ -64,6 +64,8 @@ function CreateList() {
       sorters: {}
     }
   });
+  const { filters, setFilters } = subjectTable.refineCore
+
   return (
     <ListView>
       <Breadcrumb />
@@ -75,12 +77,20 @@ function CreateList() {
             placeholder='Enter'
             className='pl-10 w-full'
             value={searcQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} />
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setFilters([{ field: 'name', operator: 'contains', value: e.target.value }])
+            }} />
+
         </div>
         <div className='flex'>
           <Select
             value={SelectedDepartment}
-            onValueChange={setSelectedDepartment}
+            onValueChange={(val) => {
+              setSelectedDepartment(val)
+              setFilters([{ field: 'department', operator: 'eq', value: val === 'all' ? '' : val }])
+            }
+            }
           >
             <SelectTrigger >
               <SelectValue placeholder='Select Department' />
