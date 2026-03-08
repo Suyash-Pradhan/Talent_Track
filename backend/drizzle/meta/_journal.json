@@ -15,6 +15,13 @@
       "when": 1771589704844,
       "tag": "0001_handy_karnak",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772978199689,
+      "tag": "0002_mature_miracleman",
+      "breakpoints": true
     }
   ]
 }

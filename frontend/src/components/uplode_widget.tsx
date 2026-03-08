@@ -102,57 +102,57 @@ function UploadWidget({
         }
       }
 
-    } catch (error) {
-      console.error("Failed to remove image from Cloudinary", error);
-      return;
-    } finally {
       setPreview(null);
       setDeleteToken(null);
       onChangeRef.current?.(null);
+    } catch (error) {
+      console.error("Failed to remove image from Cloudinary", error);
+      return;
+    } finally { 
       setIsRemoving(false);
     }
   };
 
   return (
-  <div className="space-y-2">
-    {preview ? (
-      <div className="upload-preview">
-        <img src={preview.url} alt="Uploaded file" />
+    <div className="space-y-2">
+      {preview ? (
+        <div className="upload-preview">
+          <img src={preview.url} alt="Uploaded file" />
 
-        <Button
-          type="button"
-          size="icon"
-          variant="destructive"
-          onClick={removeFromCloudinary}
-          disabled={isRemoving || disabled}
+          <Button
+            type="button"
+            size="icon"
+            variant="destructive"
+            onClick={removeFromCloudinary}
+            disabled={isRemoving || disabled}
+          >
+            <Trash className="size-4" />
+          </Button>
+        </div>
+      ) : (
+        <div
+          className="upload-dropzone"
+          role="button"
+          tabIndex={0}
+          onClick={openWidget}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openWidget();
+            }
+          }}
         >
-          <Trash className="size-4" />
-        </Button>
-      </div>
-    ) : (
-      <div
-        className="upload-dropzone"
-        role="button"
-        tabIndex={0}
-        onClick={openWidget}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            openWidget();
-          }
-        }}
-      >
-        <div className="upload-prompt">
-          <UploadCloud className="icon" />
-          <div>
-            <p>Click to upload photo</p>
-            <p>PNG, JPG up to 5MB</p>
+          <div className="upload-prompt">
+            <UploadCloud className="icon" />
+            <div>
+              <p>Click to upload photo</p>
+              <p>PNG, JPG up to 5MB</p>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 }
 
 export default UploadWidget;
