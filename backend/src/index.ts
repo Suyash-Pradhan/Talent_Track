@@ -3,8 +3,11 @@ const PORT = 8000;
 const app = express();
 import subjectRouter from "./routes/subjects.route.js";
 import cors from "cors";
+import securityMiddleware from "./middleware/security.js";
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(securityMiddleware )
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
