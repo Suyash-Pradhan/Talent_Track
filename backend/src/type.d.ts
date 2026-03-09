@@ -3,5 +3,5 @@ export type Schedule = {
     startTime: string;
     endTime: string;
 };
-type User = "admin" | "teacher" | "student"
-type RateLimitRole = UserRoles | "guest";
+export type User = "admin" | "teacher" | "student";
+export type RateLimitRole = User | "guest";
