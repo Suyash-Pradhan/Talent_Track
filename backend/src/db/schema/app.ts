@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 import { user } from "./auth";
+import { Schedule } from "../../type";
 
 // ---------- enums ----------
 
@@ -25,11 +26,6 @@ const timestamps = {
 
 // ---------- types ----------
 
-export type Schedule = {
-    day: string;
-    startTime: string;
-    endTime: string;
-};
 
 // ---------- tables ----------
 
