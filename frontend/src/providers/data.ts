@@ -21,6 +21,10 @@ const options: CreateDataProviderOptions = {
       return params;
     },
     mapResponse: async (response) => {
+      if (response.status === 429) {
+        const json = await response.json()
+        throw new Error((json as { message: string }).message)
+      }
       const payload: ListResponse = await response.clone().json();
       return payload.data || [];
     },
