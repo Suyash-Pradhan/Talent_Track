@@ -1,3 +1,5 @@
+import AgentAPI from "apminsight"
+AgentAPI.config()
 import express from "express";
 const PORT = 8000;
 const app = express();
@@ -17,8 +19,8 @@ app.use(cors({
     credentials: true,
 }))
 
-app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(securityMiddleware)
+app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use('/api/subjects', subjectRouter);
 
 app.get('/', (req, res) => {
