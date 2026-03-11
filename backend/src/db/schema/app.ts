@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 import { user } from "./auth.js";
-import { Schedule } from "../../type";
+import { Schedule } from "../../type.js";
 
 // ---------- enums ----------
 
