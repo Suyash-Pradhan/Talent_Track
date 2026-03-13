@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button'
 // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { classSchema, facultySchema } from '@/lib/schema'
 import { Separator } from '@/components/ui/separator'
-import { useBack } from '@refinedev/core'
+import { useBack, useList } from '@refinedev/core'
 import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, Form, useForm } from 'react-hook-form'
+import { Controller, Form } from 'react-hook-form'
+import { useForm } from '@refinedev/react-hook-form'
 import * as z from 'zod'
 import { Loader2 } from 'lucide-react'
 import UplodeWidget from '@/components/uplode_widget'
@@ -36,49 +37,37 @@ import {
 } from "@/components/ui/input-group"
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Subject, User } from '@/types'
 
-
-export const teachers = [
-    {
-        id: "1",
-        name: "John Doe",
-    },
-    {
-        id: "2",
-        name: "Jane Smith",
-    },
-    {
-        id: "3",
-        name: "Dr. Alan Turing",
-    },
-];
-
-export const subjects = [
-    {
-        id: 1,
-        name: "Mathematics",
-        code: "MATH",
-    },
-    {
-        id: 2,
-        name: "Computer Science",
-        code: "CS",
-    },
-    {
-        id: 3,
-        name: "Physics",
-        code: "PHY",
-    },
-    {
-        id: 4,
-        name: "Chemistry",
-        code: "CHEM",
-    },
-];
 
 function ClassesCreate() {
     const goBack = useBack()
-    const form = useForm({
+
+    const { query: subjectsQueary } = useList<Subject>({
+        resource: "subjects",
+        pagination: {
+            pageSize: 100,
+        },
+    })
+    const { query: teachersQuery } = useList<User>({
+        resource: "users",
+        filters: [
+            { field: "role", operator: "eq", value: "teacher" }
+        ],
+        pagination: {
+            pageSize: 100,
+        },
+    })
+    const teachers = teachersQuery?.data?.data || []
+    const teacherLoading = teachersQuery.isLoading
+
+    const subjects = subjectsQueary?.data?.data || []
+    const subjectLoading = subjectsQueary.isLoading
+
+    const {
+        refineCore: { onFinish },
+        ...form
+    } = useForm({
         resolver: zodResolver(classSchema),
         defaultValues: {
             status: 'active',
@@ -87,10 +76,9 @@ function ClassesCreate() {
     })
     const { isSubmitting } = form.formState
 
-    function onSubmit(data: z.infer<typeof classSchema>) {
-
+    async function onSubmit(data: z.infer<typeof classSchema>) {
         try {
-            console.log(data)
+            await onFinish(data)
         } catch (error) {
             console.error("Failed to create class:", error)
         }
@@ -184,7 +172,7 @@ function ClassesCreate() {
                                                     Subject
                                                     <span className='text-orange-600'>*</span>
                                                 </FieldLabel>
-                                                <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()} >
+                                                <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString() } >
                                                     <SelectTrigger className='w-full' >
                                                         <SelectValue placeholder="Select subject" />
                                                     </SelectTrigger>
@@ -211,7 +199,7 @@ function ClassesCreate() {
                                                     Teacher
                                                     <span className='text-orange-600'>*</span>
                                                 </FieldLabel>
-                                                <Select onValueChange={(value) => field.onChange((value))} value={field.value?.toString()}>
+                                                <Select onValueChange={(value) => field.onChange((value))} value={field.value?.toString() } disabled={teacherLoading}>
                                                     <SelectTrigger className='w-full' >
                                                         <SelectValue placeholder="Select teacher" />
                                                     </SelectTrigger>
