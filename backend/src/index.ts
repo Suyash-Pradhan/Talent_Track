@@ -8,6 +8,8 @@ import cors from "cors";
 import securityMiddleware from "./middleware/security.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
+import userRoutes from "./routes/user.router.js";
+import classRoutes from "./routes/classes.route.js";
 
 
 app.set('trust proxy', true); // Trust the first proxy for correct IP detection
@@ -22,6 +24,8 @@ app.use(cors({
 app.use(securityMiddleware)
 app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use('/api/subjects', subjectRouter);
+app.use('/api/users',userRoutes)
+app.use('/api/classes',classRoutes)
 
 app.get('/', (req, res) => {
     res.send("Hello World");
