@@ -41,21 +41,21 @@ function App() {
                 {
                   name: 'dashboard',
                   list: '/',
-                  meta: { label: "Home", icon: <Home /> }
+                  meta: { label: "Explore Mentors", icon: <Home /> }
 
                 },
                 {
                   name: 'subjects',
                   list: '/subjects',
                   create: '/subjects/create',
-                  meta: { label: "Subjects", icon: <BookOpenCheckIcon /> }
+                  meta: { label: "Topics", icon: <BookOpenCheckIcon /> }
                 },
                 {
                   name: 'classes',
                   list: '/classes',
                   create: '/classes/create',
                   show: '/classes/show/:id',
-                  meta: { label: "Classes", icon: <GraduationCap /> }
+                  meta: { label: "Cohorts", icon: <GraduationCap /> }
                 }
               ]}
             >
